@@ -1,0 +1,13 @@
+{
+  "name": "Work to Income",
+  "short_name": "WTI",
+  "description": "Work, invoices and spendable income in one private workspace.",
+  "start_url": "/work-to-income/",
+  "scope": "/work-to-income/",
+  "display": "standalone",
+  "background_color": "#f4f5ef",
+  "theme_color": "#13211f",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
