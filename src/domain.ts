@@ -1,7 +1,22 @@
-export type Page = 'overview' | 'invoices' | 'clients' | 'work' | 'money' | 'settings';
+export type Page = 'overview' | 'invoices' | 'clients' | 'work' | 'money' | 'settings' | 'privacy';
 export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
 export type WorkStatus = 'planned' | 'active' | 'done' | 'invoiced';
 export type TransactionType = 'income' | 'expense';
+export type Language = 'en' | 'lv';
+
+export interface InvoiceParty {
+  name: string;
+  registrationNumber: string;
+  vatNumber: string;
+  email: string;
+  phone: string;
+  address: string;
+  postalCode: string;
+  country: string;
+  bankName: string;
+  iban: string;
+  swift: string;
+}
 
 export interface Client {
   id: string;
@@ -11,6 +26,8 @@ export interface Client {
   email: string;
   phone: string;
   address: string;
+  postalCode: string;
+  country: string;
   createdAt: string;
 }
 
@@ -45,6 +62,8 @@ export interface Invoice {
   dueDate: string;
   status: InvoiceStatus;
   currency: string;
+  seller: InvoiceParty;
+  buyer: InvoiceParty;
   lines: InvoiceLine[];
   subtotal: number;
   taxRate: number;
@@ -67,10 +86,13 @@ export interface Transaction {
 }
 
 export interface Settings {
+  language: Language;
   businessName: string;
   registrationNumber: string;
   vatNumber: string;
   address: string;
+  postalCode: string;
+  country: string;
   email: string;
   phone: string;
   bankName: string;
@@ -83,15 +105,21 @@ export interface Settings {
   taxReserveRate: number;
   currency: string;
   invoiceNotes: string;
+  backupReminderDays: number;
 }
 
 export interface AppState {
-  schemaVersion: 1;
+  schemaVersion: 2;
   clients: Client[];
   workItems: WorkItem[];
   invoices: Invoice[];
   transactions: Transaction[];
   settings: Settings;
+  meta: {
+    createdAt: string;
+    lastBackupAt: string | null;
+    backupReminderDismissedAt: string | null;
+  };
 }
 
 export const STORAGE_KEY = 'work-to-income:v1';
@@ -140,6 +168,54 @@ export const financialSummary = (state: AppState) => {
     .filter((invoice) => invoice.status === 'sent' || invoice.status === 'overdue')
     .reduce((sum, invoice) => sum + invoice.total, 0));
   return { income, expenses, deductibleExpenses, taxableEstimate, reserve, safeToSpend, outstanding };
+};
+
+export const partyFromSettings = (settings: Settings): InvoiceParty => ({
+  name: settings.businessName.trim(),
+  registrationNumber: settings.registrationNumber.trim(),
+  vatNumber: settings.vatNumber.trim(),
+  email: settings.email.trim(),
+  phone: settings.phone.trim(),
+  address: settings.address.trim(),
+  postalCode: settings.postalCode.trim(),
+  country: settings.country.trim(),
+  bankName: settings.bankName.trim(),
+  iban: settings.iban.trim(),
+  swift: settings.swift.trim(),
+});
+
+export const partyFromClient = (client: Client): InvoiceParty => ({
+  name: client.name.trim(),
+  registrationNumber: client.registrationNumber.trim(),
+  vatNumber: client.vatNumber.trim(),
+  email: client.email.trim(),
+  phone: client.phone.trim(),
+  address: client.address.trim(),
+  postalCode: client.postalCode.trim(),
+  country: client.country.trim(),
+  bankName: '',
+  iban: '',
+  swift: '',
+});
+
+export type InvoiceValidationCode =
+  | 'seller_name' | 'seller_registration' | 'seller_address' | 'seller_country' | 'seller_iban'
+  | 'buyer_name' | 'buyer_address' | 'invoice_number' | 'issue_date' | 'due_date' | 'line_invalid';
+
+export const validateInvoice = (invoice: Invoice): InvoiceValidationCode[] => {
+  const errors: InvoiceValidationCode[] = [];
+  if (!invoice.seller.name) errors.push('seller_name');
+  if (!invoice.seller.registrationNumber) errors.push('seller_registration');
+  if (!invoice.seller.address) errors.push('seller_address');
+  if (!invoice.seller.country) errors.push('seller_country');
+  if (!invoice.seller.iban) errors.push('seller_iban');
+  if (!invoice.buyer.name) errors.push('buyer_name');
+  if (!invoice.buyer.address) errors.push('buyer_address');
+  if (!invoice.number) errors.push('invoice_number');
+  if (!invoice.issueDate) errors.push('issue_date');
+  if (!invoice.dueDate || invoice.dueDate < invoice.issueDate) errors.push('due_date');
+  if (!invoice.lines.length || invoice.lines.some((line) => !line.description.trim() || line.quantity <= 0 || line.rate < 0)) errors.push('line_invalid');
+  return errors;
 };
 
 export const elapsedMinutes = (item: WorkItem, now = Date.now()) => {

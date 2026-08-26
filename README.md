@@ -6,9 +6,11 @@ Work to Income is a private, local-first workspace for freelancers and self-empl
 
 Most tools begin with bookkeeping. Work to Income begins earlier: with the service delivered to a client. Time tracking is optional, and a professional invoice can always be created directly without first creating a project or task.
 
-## Included in v1
+## Included in v1.1
 
-- Quick invoices with clients, line items, dates, tax/VAT field and PDF export
+- Latvian and English interfaces with a persistent LV/EN switch
+- Quick invoices with complete seller/buyer details, required-field checks and Unicode-safe PDF export
+- Draft editing, deletion confirmation and invoice preview
 - Optional work tracking, timer and work-to-invoice conversion
 - Invoice states: draft, sent, paid, overdue and cancelled
 - Payment registration with automatic income entry
@@ -16,7 +18,8 @@ Most tools begin with bookkeeping. Work to Income begins earlier: with the servi
 - Configurable planning tax reserve and a central "safe to spend" figure
 - Client directory and billing history
 - Responsive desktop and mobile interface
-- Browser-local storage, JSON backup and restore
+- Browser-local storage, JSON backup/restore and configurable backup reminders
+- In-app Privacy and limitations page and a GitHub feedback shortcut
 - Demo data and empty-workspace modes
 - Installable web-app manifest and offline cache
 - Automated domain tests, linting and production build checks

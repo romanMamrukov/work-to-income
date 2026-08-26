@@ -1,0 +1,34 @@
+name: Product feedback
+description: Suggest an improvement or report a confusing experience
+title: "Feedback: "
+labels: ["feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Work to Income. Do not include real client, invoice, bank, tax or other sensitive data.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Invoices and PDF
+        - Clients
+        - Work and time
+        - Money and reserve
+        - Backup and privacy
+        - Latvian translation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: feedback
+    attributes:
+      label: What should change?
+      description: Describe the problem, expected result or idea.
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device (optional)
