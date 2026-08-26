@@ -41,7 +41,15 @@ npm run preview
 
 ## GitHub Pages
 
-The workflow in `.github/workflows/pages.yml` verifies and deploys `main`. In repository settings, set **Pages → Source** to **GitHub Actions**. The configured base path is `/work-to-income/`.
+The public site is served from the root of the `gh-pages` branch. This avoids dependence on custom GitHub Actions when Actions are unavailable for the account.
+
+After making and verifying a change locally, publish it with:
+
+```bash
+npm run deploy:pages
+```
+
+In repository settings, keep **Pages → Source** set to **Deploy from a branch**, with `gh-pages` and `/(root)` selected. The configured Vite base path is `/work-to-income/`.
 
 ## Data and privacy
 
