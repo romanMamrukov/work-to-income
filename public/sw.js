@@ -1,4 +1,4 @@
-const CACHE = 'work-to-income-v1.1';
+const CACHE = 'work-to-income-v1.2';
 const BASE = new URL(self.registration.scope).pathname;
 
 self.addEventListener('install', (event) => {

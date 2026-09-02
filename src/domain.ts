@@ -3,6 +3,7 @@ export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
 export type WorkStatus = 'planned' | 'active' | 'done' | 'invoiced';
 export type TransactionType = 'income' | 'expense';
 export type Language = 'en' | 'lv';
+export type InvoiceUnit = 'hours' | 'items';
 
 export interface InvoiceParty {
   name: string;
@@ -48,7 +49,7 @@ export interface InvoiceLine {
   id: string;
   description: string;
   quantity: number;
-  unit: string;
+  unit: InvoiceUnit | string;
   rate: number;
   amount: number;
   workItemId?: string;
@@ -137,6 +138,15 @@ export const addDays = (date: string, days: number) => {
 
 export const roundMoney = (value: number) =>
   Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+
+export const normalizeInvoiceUnit = (unit: string): InvoiceUnit =>
+  ['hours', 'hour', 'h', 'stunda', 'stundas'].includes(unit.toLowerCase()) ? 'hours' : 'items';
+
+export const invoiceUnitLabel = (unit: string, language: Language) => {
+  const normalized = normalizeInvoiceUnit(unit);
+  if (normalized === 'hours') return language === 'lv' ? 'st.' : 'hrs';
+  return language === 'lv' ? 'gab.' : 'pcs';
+};
 
 export const calculateInvoice = (lines: InvoiceLine[], taxRate: number) => {
   const normalizedLines = lines.map((line) => ({

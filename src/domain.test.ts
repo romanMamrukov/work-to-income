@@ -7,7 +7,7 @@ describe('calculateInvoice', () => {
   it('normalizes lines and calculates tax without floating point leakage', () => {
     const lines: InvoiceLine[] = [
       { id: '1', description: 'Consulting', quantity: 2.5, unit: 'hours', rate: 40, amount: 0 },
-      { id: '2', description: 'Hosting', quantity: 1, unit: 'service', rate: 19.99, amount: 0 },
+      { id: '2', description: 'Hosting', quantity: 1, unit: 'items', rate: 19.99, amount: 0 },
     ];
     expect(calculateInvoice(lines, 21)).toMatchObject({ subtotal: 119.99, taxAmount: 25.2, total: 145.19 });
   });
